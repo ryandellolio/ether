@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/ryandellolio/ether/issues"
   },
-  "homepage": "https://github.com/ryandellolio/ether#readme"
+  "homepage": "https://github.com/ryandellolio/ether#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
