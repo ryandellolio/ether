@@ -1,14 +1,36 @@
 var http = require('http');
 var dns = require('dns');
+var sqlite3 = require('sqlite3').verbose();
 
+/*
+//create a server object:
+http.createServer(function (req, res) {
+  //code here
 
-var w3 = dns.resolveTxt('dns-field-test787.dellol.io', function (err, responses, family) {
-  var entries = responses;
+}).listen(80); //the server object listens on port 80
+
+*/
+
+var db = new sqlite3.Database('storage');
+var read = dns.resolveTxt('dns-field-test787.dellol.io', function (err, entries, family) {   //query dns and write response to entries variable
+  console.log(JSON.stringify(entries));
 });
 
 
-//create a server object:
-http.createServer(function (req, res) {
-  res.write('Hello World!'); //write a response to the client
-  res.end(); //end the response
-}).listen(8080); //the server object listens on port 8080
+db.serialize(function() {
+  db.run(`
+  
+  CREATE TABLE IF NOT EXISTS "content" (
+    "field_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+    "name"	TEXT,
+    "value"	TEXT
+  );
+  
+  `);
+
+  db.each("SELECT field_id AS id, name, value FROM content", function(err, row) {
+      console.log(row.id + " " + row.name + " "+ row.value + '\n');
+  });
+});
+
+db.close();

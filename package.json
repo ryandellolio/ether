@@ -18,6 +18,7 @@
   "homepage": "https://github.com/ryandellolio/ether#readme",
   "dependencies": {
     "dns": "^0.2.2",
-    "http": "0.0.0"
+    "http": "0.0.0",
+    "sqlite3": "^4.0.6"
   }
 }
