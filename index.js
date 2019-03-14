@@ -36,18 +36,31 @@ db.serialize(function() {
 db.close();
 
 
-//-----1-----read the sqlite database file
+//-----2-----read the sqlite database file
 
 fs.readFile('storage', 'utf8', function(err, data) {  
     if (err) throw err;
-    
     console.log(data);
-    
 });
 
-//-----2-----read the sqlite database file
-
+//-----3-----query dns
 
 var read = dns.resolveTxt('dns-field-test787.dellol.io', function (err, entries, family) {   
-  console.log(JSON.stringify(entries));
+  
+  var json_entries = JSON.stringify(entries);
+  console.log(json_entries);
+
+
+  //-----4-------write file
+  
+        fs.writeFile('file', json_entries, function(err) {  
+          if (err) throw err;
+          console.log("file written")
+         });
+
+
 });
+
+
+
+
