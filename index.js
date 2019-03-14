@@ -3,6 +3,8 @@ var dns = require('dns');
 var sqlite3 = require('sqlite3').verbose();
 var fs = require('fs');
 var aes256 = require('aes256');
+var moment = require('moment');
+
 
 /*
 //create a server object:
@@ -32,6 +34,8 @@ db.serialize(function() {
   
 
 //----------save dump sqlite to raw sql file
+
+  var unix_time = moment().unix();
 
   const { exec } = require('child_process');
   exec('sqlite3 storage \'.dump\' > raw-streaming.sql', (error, stdout, stderr) => {
