@@ -1,19 +1,20 @@
-var http = require('http');
-var dns = require('dns');
-var sqlite3 = require('sqlite3').verbose();
 var fs = require('fs');
 var aes256 = require('aes256');
-var moment = require('moment');
+
+const key = "key";
+const file = 'init.sql';
 
 
-//---------read init.sql or basic-init.sql and encrypt for storage
-
-
-  var key = "key";
-
-  fs.readFile('init.sql', 'utf8', function(err, data) {  
+  fs.readFile(file, 'utf8', function(err, data) {  
     if (err) throw err;
     var encrypted_init = aes256.encrypt(key, data);
-    console.log("Save the following in DNS------------")
-    console.log(encrypted_init.match(/.{1,254}/g));
+    var encrypted_storage = encrypted_init.match(/.{1,254}/g);
+
+    console.log("Save the following in DNS, in order.  Generated from " + file + ". \n")
+
+    encrypted_storage.forEach( blob => {
+      console.log(blob + "\n");
+    });
+
+
   });

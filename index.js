@@ -3,15 +3,16 @@ var sqlite3 = require('sqlite3').verbose();
 var aes256 = require('aes256');
 var splitRetain = require('split-retain');
 
+const dns_entry = 'dns#v1-1.dellol.io';
+const key = 'key';
 
 //make DNS call
 
-var read = dns.resolveTxt('dns#v1-1.dellol.io', function (err, entries, family) {   
+var read = dns.resolveTxt(dns_entry, function (err, entries, family) {   
   
   //decrypt the first 2 entries
 
   var encrypted = entries[0][0] + entries[1][0];
-  var key = 'key';
   var decrypted = aes256.decrypt(key, encrypted);
   
   
@@ -23,7 +24,7 @@ var read = dns.resolveTxt('dns#v1-1.dellol.io', function (err, entries, family) 
 
   //create sqlite3 database in memory 
    
-  var db = new sqlite3.Database('temp.db'); //:memory:
+  var db = new sqlite3.Database(':memory:'); //:memory:
  
   db.serialize(function() {
 
@@ -33,10 +34,8 @@ var read = dns.resolveTxt('dns#v1-1.dellol.io', function (err, entries, family) 
         db.run(statement);
     });
 
-    
-   
-    db.each("SELECT field_id AS id, name, value FROM content", function(err, row) {
-        console.log(row.name + " - " + row.value);
+    db.each("SELECT field_id AS id, name, value FROM content", function(err, row) {  
+      console.log(row.name + " - " + row.value);
     });
 
   });
