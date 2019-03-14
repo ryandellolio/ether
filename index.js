@@ -15,12 +15,31 @@ var read = dns.resolveTxt('dns#v1-1.dellol.io', function (err, entries, family) 
   var decrypted = aes256.decrypt(key, encrypted);
   
   console.log(decrypted);
-  
-  //use this to generate test encrypted strings
-  //console.log('encrypter: ' + aes256.encrypt(key, "my name is ryan"));
 
-  
+  var db = new sqlite3.Database(':memory:');
+ 
+  db.serialize(function() {
+  db.run("CREATE TABLE lorem (info TEXT)");
+ 
+  var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+  for (var i = 0; i < 10; i++) {
+      stmt.run("Ipsum " + i);
+  }
+  stmt.finalize();
+ 
+  db.each("SELECT rowid AS id, info FROM lorem", function(err, row) {
+      console.log(row.id + ": " + row.info);
+  });
 });
+ 
+db.close();
+
+});
+
+
+
+
+
 
 
 
