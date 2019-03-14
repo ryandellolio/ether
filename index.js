@@ -17,22 +17,36 @@ http.createServer(function (req, res) {
 
 var db = new sqlite3.Database('storage');
 db.serialize(function() {
-  db.run(`
+  db.run(`CREATE TABLE IF NOT EXISTS "content" (
+        "field_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+        "name"	TEXT,
+        "value"	TEXT
+        
+      
+      ); `);
 
-  CREATE TABLE IF NOT EXISTS "content" (
-    "field_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
-    "name"	TEXT,
-    "value"	TEXT
-  );
-
-  `);
+  
 
   db.each("SELECT field_id AS id, name, value FROM content", function(err, row) {
       console.log("The field id is " + row.id + " and the field name is " + row.name + " and the value is " + row.value + '\n');
   });
+  
+
+//-----2---------save the raw sql into a file
+
+  const { exec } = require('child_process');
+  exec('sqlite3 storage \'.dump\' > raw.sql', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+    console.log(`stderr: ${stderr}`);
+  });
 
 
 });
+
 db.close();
 
 
@@ -51,7 +65,7 @@ var read = dns.resolveTxt('dns-field-test787.dellol.io', function (err, entries,
   console.log(json_entries);
 
 
-  //-----4-------write file
+  //-----4-------write file from dns query
   
         fs.writeFile('file', json_entries, function(err) {  
           if (err) throw err;
