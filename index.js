@@ -1,3 +1,6 @@
+//TODO: gracefully handle multiple TXT entries (somehow), both in retrieval here and in storage init
+//TODO: DNS shell?  basically open by reading, get to a sqlite prompt, then close by writing
+
 var dns = require('dns');
 var sqlite3 = require('sqlite3').verbose();
 var aes256 = require('aes256');
@@ -16,7 +19,6 @@ var read = dns.resolveTxt(dns_entry, function (err, entries, family) {
   var encrypted = entries[0][0] + entries[1][0];
   var decrypted = aes256.decrypt(key, encrypted);
   
-  
   //write results to console
 
   console.log("-------The following encrypted database was retrieved from sequential TXT records at DNS entry " + dns_entry + "-------\n")
@@ -26,12 +28,11 @@ var read = dns.resolveTxt(dns_entry, function (err, entries, family) {
   console.log("\n----------------------------------------------------------------------\n")
   console.log("Cloud query: " + cloud_query + "\n")
 
-  
+
   //create sqlite3 database in memory 
    
   var db = new sqlite3.Database(':memory:'); 
- 
-  db.serialize(function() {
+   db.serialize(function() {
 
     var statements = splitRetain(decrypted, ';')
     
