@@ -11,7 +11,9 @@ var moment = require('moment');
 
   var key = "key";
 
-  fs.readFile('basic-init.sql', 'utf8', function(err, data) {  
+  fs.readFile('init.sql', 'utf8', function(err, data) {  
     if (err) throw err;
-    console.log('encrypter: ' + aes256.encrypt(key, data));
+    var encrypted_init = aes256.encrypt(key, data);
+    console.log("Save the following in DNS------------")
+    console.log(encrypted_init.match(/.{1,254}/g));
   });
