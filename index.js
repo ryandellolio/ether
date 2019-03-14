@@ -13,29 +13,28 @@ http.createServer(function (req, res) {
 
 */
 
-//-----1-----create and read sqlite database
 
 var db = new sqlite3.Database('storage');
-db.serialize(function() {
-  db.run(`CREATE TABLE IF NOT EXISTS "content" (
-        "field_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
-        "name"	TEXT,
-        "value"	TEXT
-        
-      
-      ); `);
 
-  
+db.serialize(function() {
+
+
+  //----------initialize sqlite database
+
+
+
+
+  //--------- read sqlite database to console
 
   db.each("SELECT field_id AS id, name, value FROM content", function(err, row) {
       console.log("The field id is " + row.id + " and the field name is " + row.name + " and the value is " + row.value + '\n');
   });
   
 
-//-----2---------save the raw sql into a file
+//----------save dump sqlite to raw sql file
 
   const { exec } = require('child_process');
-  exec('sqlite3 storage \'.dump\' > raw.sql', (error, stdout, stderr) => {
+  exec('sqlite3 storage \'.dump\' > raw-streaming.sql', (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return;
@@ -50,7 +49,7 @@ db.serialize(function() {
 db.close();
 
 
-//-----2-----read the sqlite database file
+//---------read a sqlite database file
 
 fs.readFile('storage', 'utf8', function(err, data) {  
     if (err) throw err;
