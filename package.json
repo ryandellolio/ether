@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ryandellolio/ether#readme",
   "dependencies": {
-    "express": "^4.16.4"
+    "dns": "^0.2.2",
+    "http": "0.0.0"
   }
 }
