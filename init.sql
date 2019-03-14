@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "content" (
     "name"	TEXT,
     "value"	TEXT
   );
-INSERT INTO content VALUES(1,'description','<p>Heading</p>');
+INSERT INTO content VALUES(1,'description','<p>Heading with a change</p>');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('content',1);
 COMMIT;
