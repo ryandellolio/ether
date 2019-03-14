@@ -25,9 +25,11 @@ var read = dns.resolveTxt(dns_entry, function (err, entries, family) {
   console.log('\x1b[36m%s\x1b[0m', decrypted);
   console.log("\n----------------------------------------------------------------------\n")
   console.log("Cloud query: " + cloud_query + "\n")
+
+  
   //create sqlite3 database in memory 
    
-  var db = new sqlite3.Database(':memory:'); //:memory:
+  var db = new sqlite3.Database(':memory:'); 
  
   db.serialize(function() {
 
