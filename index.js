@@ -3,5 +3,8 @@
 
 var dnsDB = require('./dnsDB.js');
 
-var database = new dnsDB('dns#v1-1.dellol.io', "key", "SELECT field_id as id, name, value FROM content WHERE id = '1'");
+
+var database = new dnsDB('dns#v1-1.dellol.io', "key");
 database.open();
+
+

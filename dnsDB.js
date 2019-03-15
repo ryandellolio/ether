@@ -1,20 +1,20 @@
 module.exports = dnsDB;
 
 var dns = require('dns');
-var sqlite3 = require('sqlite3').verbose();
 var aes256 = require('aes256');
 var splitRetain = require('split-retain');
+var sqlite3 = require('sqlite3').verbose();
 
 
 
-function dnsDB (entry, key, query) {
+
+function dnsDB (entry, key) {
 
     // set up class properties, and register getters and setters
 
     this.entry = entry;
     this.key = key;
-    this.query = query;
-
+   
     this.setEntry = function(s) {
         entry = s;
     }
@@ -29,21 +29,18 @@ function dnsDB (entry, key, query) {
         return key;
     }
 
-    this.setQuery = function(s) {
-        query = s;
-    }
-    this.getQuery = function() {
-        return query;
-    }
+
 
 }
 
-//open function
-dnsDB.prototype.open = function() {
-    
-    var entry = this.getEntry();
-    var key = this.getKey();
-    var query = this.getQuery();
+
+//constructor to get the db and store it to memory using sqlite
+//query function
+dnsDB.prototype.open = function(  ) {
+
+    global.db = new sqlite3.Database(':memory:'); 
+    entry = this.getEntry();
+    key = this.getKey();
 
     var read = dns.resolveTxt(entry, function (err, entries, family) {   
         var encrypted = entries[0][0] + entries[1][0];
@@ -54,38 +51,46 @@ dnsDB.prototype.open = function() {
         console.log("\n######-----This decrypts to the following---------#######\n")
         console.log('\x1b[36m%s\x1b[0m', decrypted);
         console.log("\n----------------------------------------------------------------------\n")
-        console.log("Cloud query: " + query + "\n")
-    
-        var db = new sqlite3.Database(':memory:'); 
+
         db.serialize(function() {
-    
-        var statements = splitRetain(decrypted, ';')
-        
-        statements.forEach( statement => {
-            db.run(statement);
+
+            var statements = splitRetain(decrypted, ';')
+            
+            statements.forEach( statement => {
+                db.run(statement);
+            });
         });
-    
-        db.each(query, function(err, row) {  
-            console.log(row.value);
-        });
-  
+
     });
-    
-    db.close();
-  
-  });
-  
-  
-};
+
+}
+
 
 
 //query function
-dnsDB.prototype.query = function() {
+dnsDB.prototype.query = function( statement ) {
+/*
+    this.statement = statement;
 
+
+
+    db.serialize(function() {
+
+        db.each("SELECT field_id as id, name, value FROM content WHERE id = '1'", function(err, row) {  
+            //console.log(row.id);
+            //console.log("SELECT field_id as id, name, value FROM content WHERE id = '1'");
+        }); 
+      
+
+    });
+*/
+  
 };
 
 //close function
-dnsDB.prototype.close = function() {
+dnsDB.prototype.close = function( ) {
+    //db.close();
+    //console.log("CLOSED");
 
 };
 
