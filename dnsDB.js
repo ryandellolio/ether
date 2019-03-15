@@ -1,6 +1,5 @@
-
-
 module.exports = dnsDB;
+
 var dns = require('dns');
 var sqlite3 = require('sqlite3').verbose();
 var aes256 = require('aes256');
@@ -73,7 +72,4 @@ dnsDB.prototype.open = function() {
 
 
 
-//-----use the object
 
-//var database = new dnsDB('dns#v1-1.dellol.io', "key", "SELECT field_id as id, name, value FROM content WHERE id = '1'");
-//database.open();
