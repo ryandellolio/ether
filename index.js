@@ -1,5 +1,5 @@
 //TODO: gracefully handle multiple TXT entries (somehow), both in retrieval here and in storage init
-//TODO: DNS shell?  basically open by reading, get to a sqlite prompt, then close by writing
+//TODO: write a query, and close method
 
 var dnsDB = require('./dnsDB.js');
 

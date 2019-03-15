@@ -8,6 +8,9 @@ var splitRetain = require('split-retain');
 
 
 function dnsDB (entry, key, query) {
+
+    // set up class properties, and register getters and setters
+
     this.entry = entry;
     this.key = key;
     this.query = query;
@@ -35,31 +38,36 @@ function dnsDB (entry, key, query) {
 
 }
 
+//open function
 dnsDB.prototype.open = function() {
-
-    var read = dns.resolveTxt('dns#v1-1.dellol.io', function (err, entries, family) {   
-    var encrypted = entries[0][0] + entries[1][0];
-    var decrypted = aes256.decrypt("key", encrypted);
     
-    console.log("-------The following encrypted database was retrieved from sequential TXT records at DNS entry dns#v1-1.dellol.io -------\n")
-    console.log('\x1b[33m%s\x1b[0m', encrypted);
-    console.log("\n######-----This decrypts to the following---------#######\n")
-    console.log('\x1b[36m%s\x1b[0m', decrypted);
-    console.log("\n----------------------------------------------------------------------\n")
-    console.log("Cloud query: " + "SELECT field_id as id, name, value FROM content WHERE id = '1'" + "\n")
-  
-    var db = new sqlite3.Database(':memory:'); 
-     db.serialize(function() {
-  
-      var statements = splitRetain(decrypted, ';')
-      
-      statements.forEach( statement => {
-          db.run(statement);
-      });
-  
-      db.each("SELECT field_id as id, name, value FROM content WHERE id = '1'", function(err, row) {  
-        console.log(row.value);
-      });
+    var entry = this.getEntry();
+    var key = this.getKey();
+    var query = this.getQuery();
+
+    var read = dns.resolveTxt(entry, function (err, entries, family) {   
+        var encrypted = entries[0][0] + entries[1][0];
+        var decrypted = aes256.decrypt(key, encrypted);
+        
+        console.log("-------The following encrypted database was retrieved from sequential TXT records at DNS entry " + entry + " -------\n")
+        console.log('\x1b[33m%s\x1b[0m', encrypted);
+        console.log("\n######-----This decrypts to the following---------#######\n")
+        console.log('\x1b[36m%s\x1b[0m', decrypted);
+        console.log("\n----------------------------------------------------------------------\n")
+        console.log("Cloud query: " + query + "\n")
+    
+        var db = new sqlite3.Database(':memory:'); 
+        db.serialize(function() {
+    
+        var statements = splitRetain(decrypted, ';')
+        
+        statements.forEach( statement => {
+            db.run(statement);
+        });
+    
+        db.each(query, function(err, row) {  
+            console.log(row.value);
+        });
   
     });
     
@@ -71,5 +79,13 @@ dnsDB.prototype.open = function() {
 };
 
 
+//query function
+dnsDB.prototype.query = function() {
 
+};
+
+//close function
+dnsDB.prototype.close = function() {
+
+};
 
