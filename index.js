@@ -14,9 +14,9 @@ var save = dnsDB('dns#v1-1.dellol.io', "key", true, function ( db, close ){  //c
             console.log('\x1b[32m%s\x1b[0m', row.field_id + " | " + row.name + " | " + row.value);            
         }); 
 
-        db.exec("INSERT INTO content VALUES(15,'description','<p>Stella</p>')");
-        db.exec("INSERT INTO content VALUES(18,'description','<p>Stella</p>')");
-        db.exec("INSERT INTO content VALUES(19,'description','<p>Stella</p>')");
+        
+        db.exec("INSERT INTO content VALUES(22,'description','<p>Stella</p>')");
+
         
     }); 
 

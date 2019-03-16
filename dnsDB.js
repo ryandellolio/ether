@@ -87,11 +87,21 @@ function dnsDB (entry, key, writeMode, callback) {
                 callback(db);
                     //next another serial function with an innocous exec command to execute after
                     db.serialize(function() {
-                        db.exec("INSERT INTO content VALUES(44,'description','<p>Stella</p>')", function ( ){
+                        db.exec("SELECT * FROM CONTENT", function ( ){
+                            //this ONLY happens once everything is done
+                            if(writeMode == true){
+                                sqliteToAWSconsole('storage.db', function () {
+                                    //finally we are done
+                                    //close db and delete files
+                                    db.close;
+                                    fs.unlinkSync("./storage.db");
+                                    //fs.unlinkSync("./lastPlainText.sql");
+                                });
+                            } else {
+                                db.close;
+                            }
 
-                            sqliteToAWSconsole('storage.db');
 
-                            
                         });
                     });
             });
@@ -103,7 +113,7 @@ function dnsDB (entry, key, writeMode, callback) {
 
 
 
-function sqliteToAWSconsole( filename ) {
+function sqliteToAWSconsole( filename, callback ) {
     
     //write db to plaintext for temp storage
         const { exec } = require('child_process');
@@ -118,14 +128,19 @@ function sqliteToAWSconsole( filename ) {
 
                 var sort = 1;
                 encrypted_storage.forEach( blob => {
-                //read out to console
-                process.stdout.write("\"" + sort+ "###" + blob + "\"\n\n");
-                sort++;
-                });                 
+                    //read out to console
+                    process.stdout.write("\"" + sort+ "###" + blob + "\"\n\n");
+                    sort++;
+                }); 
+                callback();                
                 
             });
             
         });
+
+        
+
+
 }
 
 
