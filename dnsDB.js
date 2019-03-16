@@ -67,6 +67,7 @@ function dnsDB (entry, key, callback) {
 
             callback(db);  //execute things
 
+
         });
         
 
@@ -75,7 +76,6 @@ function dnsDB (entry, key, callback) {
 
     
 
-    //return db;
 
 }
 
