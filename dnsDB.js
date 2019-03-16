@@ -1,5 +1,6 @@
 module.exports = dnsDB;
 
+
 var dns = require('dns');
 var aes256 = require('aes256');
 var splitRetain = require('split-retain');
@@ -29,14 +30,6 @@ function dnsDB (entry, key, writeMode, callback) {
         return key;
     }
 
-    //constructor to get the db and store it to memory using sqlite
-
-    if( writeMode == true ){
-        var db = new sqlite3.Database('storage.db'); 
-    } else {
-        //we will use sqlite3 memory mode if read only, to make this faster
-        var db = new sqlite3.Database(':memory:'); 
-    }
 
     var read = dns.resolveTxt(entry, function (err, entries, family) {
         
@@ -65,31 +58,37 @@ function dnsDB (entry, key, writeMode, callback) {
         console.log('\x1b[36m%s\x1b[0m', decrypted);
         console.log("\n----------------------------------------------------------------------\n")
         */
+       if( writeMode == true ){
+            //if write mode is on, use the slower method but we need this to do a sqlite dump
+            var db = new sqlite3.Database('storage.db', (err) => {
+                if (err) {
+                    console.error(err.message);
+                }
+        }); 
 
+        } else {
+            //we will use sqlite3 memory mode if read only, to make this faster
+            var db = new sqlite3.Database(':memory:', (err) => {
+                if (err) {
+                    console.error(err.message);
+                }
+            });
+        }
         db.serialize(function() {     //actually work with the DB
-
-            //inside our 2nd nested callback, per sqlite3 api to execute serial statements
-
             var statements = splitRetain(decrypted, ';') //split statements
 
             //instantiate the db by executing decrypted statements from TXT records
-
             statements.forEach( statement => {
                 db.exec(statement);
             });
 
-            callback(db);  //execute all the things 
-
-            /*
-            if(writeMode == true){     //this is not timing correctly.  RACE CONDITION
-                sqliteToAWSconsole("storage.db");
-            }
-            */
-
-        });
-
+            //nest another serialized set of instructions to ensure the primary instructions happen after the DB is initialized
+            db.serialize(function() {
+                callback(db);
+            });
+        });  
+       
     });
-
 }
 
 
