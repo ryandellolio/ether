@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS "content" (
     "value"	TEXT
   );
 INSERT INTO content VALUES(1,'description','<p>Kate</p>');
+INSERT INTO content VALUES(2,'description','<p>Ryan</p>');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('content',1);
 COMMIT;

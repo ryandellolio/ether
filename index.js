@@ -7,7 +7,7 @@ dnsDB('dns#v1-1.dellol.io', "key", function ( db ){  //creates a sqlite3 db from
 
   db.serialize(function() {         //use as you normally would per https://www.npmjs.com/package/sqlite3
   
-    db.each("SELECT field_id as id, name, value FROM content WHERE id = '1'", function(err, row) {  
+    db.each("SELECT field_id as id, name, value FROM content WHERE id = '2'", function(err, row) {  
       if(err)
         console.log(err);
       if(row)
