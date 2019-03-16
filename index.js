@@ -3,7 +3,7 @@
 
 var dnsDB = require('./dnsDB.js');
 
-var save = dnsDB('dns#v1-1.dellol.io', "key", false, function ( db, close ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
+var save = dnsDB('dns#v1-1.dellol.io', "key", true, function ( db, close ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
 
     db.serialize(function() {         //use as you normally would per https://www.npmjs.com/package/sqlite3
 
@@ -15,7 +15,7 @@ var save = dnsDB('dns#v1-1.dellol.io', "key", false, function ( db, close ){  //
         }); 
 
         
-        db.exec("INSERT INTO content VALUES(22,'description','<p>Stella</p>')");
+        db.exec("INSERT INTO content VALUES(29,'descriptidescriptiondescriptiondescriptiondescriptionon','<p>Stella</p>')");
 
         
     }); 
