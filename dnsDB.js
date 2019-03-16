@@ -30,8 +30,11 @@ function dnsDB (entry, key, writeMode, callback) {
         return key;
     }
 
+    //dns.setServers(['8.8.4.4']);
+    //console.log(dns.getServers());
 
-    var read = dns.resolveTxt(entry, function (err, entries, family) {
+
+    var example = dns.resolveTxt(entry, function (err, entries, family) {
         
         //we are inside our first callback, waiting for TXT records to come back! 
         //once that's done.....
@@ -87,7 +90,7 @@ function dnsDB (entry, key, writeMode, callback) {
                 callback(db);
                     //next another serial function with an innocous exec command to execute after
                     db.serialize(function() {
-                        db.exec("SELECT * FROM CONTENT", function ( ){
+                        db.exec("SELECT * FROM content", function ( ){
                             //this ONLY happens once everything is done
                             if(writeMode == true){
                                 sqliteToAWSconsole('storage.db', function () {

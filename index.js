@@ -10,7 +10,7 @@ else
     var writeMode = false;
 
 
-var save = dnsDB('dns#v1-1.dellol.io', "key", writeMode, function ( db, close ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
+var data = dnsDB('storage.db.dellol.io', "key", writeMode, function ( db ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
 
     db.serialize(function() {         //use as you normally would per https://www.npmjs.com/package/sqlite3
 
