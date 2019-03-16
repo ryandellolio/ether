@@ -24,7 +24,7 @@ var data = dnsDB('storage.db.dellol.io', "key", writeMode, function ( db ){  //c
         
         /*
         //programatic example
-        db.each("SELECT * FROM CONTENT", function(err, row) {  
+        db.each("SELECT * FROM content", function(err, row) {  
             if(err)
               console.log('\x1b[31m%s\x1b[0m', err);
             if(row)
