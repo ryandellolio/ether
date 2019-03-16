@@ -16,7 +16,6 @@ function dnsDB (entry, key, callback) {
     this.setEntry = function(s) {
         entry = s;
     }
-
     this.getEntry = function() {
         return entry;
     }
@@ -28,13 +27,10 @@ function dnsDB (entry, key, callback) {
         return key;
     }
 
-//constructor to get the db and store it to memory using sqlite
+    //constructor to get the db and store it to memory using sqlite
 
 
     var db = new sqlite3.Database(':memory:'); 
-    entry = this.getEntry();
-    key = this.getKey();
-
 
     var read = dns.resolveTxt(entry, function (err, entries, family) {   
         var encrypted = entries[0][0] + entries[1][0];
@@ -52,14 +48,14 @@ function dnsDB (entry, key, callback) {
 
         db.serialize(function() {
 
-            var statements = splitRetain(decrypted, ';')
-            
-            //instantiate the db
+            var statements = splitRetain(decrypted, ';') //split statements
+
+            //instantiate the db by executing decrypted statements from TXT records
             statements.forEach( statement => {
                 db.run(statement);
             });
 
-            callback(db);
+            callback(db);  //execute
 
         });
         
