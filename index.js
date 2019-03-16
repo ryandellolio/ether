@@ -2,21 +2,36 @@
 //TODO - have dnsdb provide output to re-save to DB
 
 var dnsDB = require('./dnsDB.js');
+var query = process.argv[2];
 
-var save = dnsDB('dns#v1-1.dellol.io', "key", true, function ( db, close ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
+if(process.argv[3] == "true")
+    var writeMode = true;
+else
+    var writeMode = false;
+
+
+var save = dnsDB('dns#v1-1.dellol.io', "key", writeMode, function ( db, close ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
 
     db.serialize(function() {         //use as you normally would per https://www.npmjs.com/package/sqlite3
 
-        db.each("SELECT * FROM content", function(err, row) {  
+        db.each(query, function(err, row) {  
           if(err)
             console.log('\x1b[31m%s\x1b[0m', err);
           if(row)
             console.log('\x1b[32m%s\x1b[0m', row.field_id + " | " + row.name + " | " + row.value);            
-        }); 
-
+        });
         
-        db.exec("INSERT INTO content VALUES(29,'descriptidescriptiondescriptiondescriptiondescriptionon','<p>Stella</p>')");
+        
+        /*
+        //programatic example
+        db.each("SELECT * FROM CONTENT", function(err, row) {  
+            if(err)
+              console.log('\x1b[31m%s\x1b[0m', err);
+            if(row)
+              console.log('\x1b[32m%s\x1b[0m', row.field_id + " | " + row.name + " | " + row.value);            
+          }); 
 
+          */
         
     }); 
 
