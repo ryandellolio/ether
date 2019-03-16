@@ -82,9 +82,18 @@ function dnsDB (entry, key, writeMode, callback) {
                 db.exec(statement);
             });
 
-            //nest another serialized set of instructions to ensure the primary instructions happen after the DB is initialized
+            //nest another serialized set of instructions to ensure API user's instructions happen after the DB is initialized.  This makes dnsDB seamless
             db.serialize(function() {
                 callback(db);
+                    //next another serial function with an innocous exec command to execute after
+                    db.serialize(function() {
+                        db.exec("INSERT INTO content VALUES(44,'description','<p>Stella</p>')", function ( ){
+
+                            sqliteToAWSconsole('storage.db');
+
+                            
+                        });
+                    });
             });
         });  
        
