@@ -4,9 +4,10 @@ var dns = require('dns');
 var aes256 = require('aes256');
 var splitRetain = require('split-retain');
 var sqlite3 = require('sqlite3').verbose();
+var fs = require('fs');
 
 
-function dnsDB (entry, key, callback) {
+function dnsDB (entry, key, writeMode, callback) {
 
     // set up class properties, and register getters and setters
 
@@ -29,9 +30,16 @@ function dnsDB (entry, key, callback) {
 
     //constructor to get the db and store it to memory using sqlite
 
+    if( writeMode == true ){
 
-    var db = new sqlite3.Database(':memory:'); 
+        var db = new sqlite3.Database('storage.db'); 
 
+    } else {
+        
+        //we will use sqlite3 memory mode if read only, to make this faster
+        var db = new sqlite3.Database(':memory:');         
+
+    }
     var read = dns.resolveTxt(entry, function (err, entries, family) {
         
         var encryptedRecordsInOrder = Array();
@@ -56,25 +64,68 @@ function dnsDB (entry, key, callback) {
         console.log("\n----------------------------------------------------------------------\n")
         */
 
-        db.serialize(function() {
+        db.serialize(function() {     //actually work with the DB
 
             var statements = splitRetain(decrypted, ';') //split statements
 
             //instantiate the db by executing decrypted statements from TXT records
+
             statements.forEach( statement => {
                 db.run(statement);
             });
 
             callback(db);  //execute things
 
+            db.close();   //close DB
 
         });
-        
 
+
+        
+        //execute the dump
+
+        if( writeMode == true ){
+
+            const { exec } = require('child_process');
+            exec('sqlite3 storage.db .dump > plaintext.sql', (error, stdout, stderr) => {
+              
+
+
+                fs.readFile('plaintext.sql', 'utf8', function(err, data) {  
+                    if (err) throw err;
+                    var encrypted_init = aes256.encrypt(key, data);
+                    var encrypted_storage = encrypted_init.match(/.{1,200}/g);
+      
+                    var sort = 1;
+                    encrypted_storage.forEach( blob => {
+                      //read out to console
+                      process.stdout.write("\"" + sort+ "###" + blob + "\"\n\n");
+                      sort++;
+                    });                 
+                    
+                });
+                
+                //clean up after yourself!
+                fs.unlink('./storage.db', (err) => {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
+                })
+
+                /*
+                fs.unlink('./plaintext.sql', (err) => {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
+                })                
+                */   
+
+            });
+        } 
 
     });
-
-    
 
 
 }
