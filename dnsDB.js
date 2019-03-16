@@ -98,7 +98,7 @@ function dnsDB (entry, key, writeMode, callback) {
                                     //fs.unlinkSync("./lastPlainText.sql");
                                 });
                             } else {
-                                db.close;
+                                    db.close;
                             }
 
 
