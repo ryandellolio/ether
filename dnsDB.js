@@ -32,10 +32,20 @@ function dnsDB (entry, key, callback) {
 
     var db = new sqlite3.Database(':memory:'); 
 
-    var read = dns.resolveTxt(entry, function (err, entries, family) {   
-        var encrypted = entries[0][0] + entries[1][0];
-        var decrypted = aes256.decrypt(key, encrypted);
+    var read = dns.resolveTxt(entry, function (err, entries, family) {
         
+        var encryptedRecordsInOrder = Array();
+
+        entries.forEach(function(entry) {
+            var rawString = entry[0];
+            var parts = rawString.split("###");
+            var sortOrder = parts[0];
+            encryptedRecordsInOrder[sortOrder] = parts[1];
+        });
+
+        var encrypted = encryptedRecordsInOrder.join('');
+        var decrypted = aes256.decrypt(key, encrypted);
+
         /*
         //VERBOSE MODE
 
@@ -55,7 +65,7 @@ function dnsDB (entry, key, callback) {
                 db.run(statement);
             });
 
-            callback(db);  //execute
+            callback(db);  //execute things
 
         });
         
