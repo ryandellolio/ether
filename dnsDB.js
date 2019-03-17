@@ -40,9 +40,7 @@ function dnsDB (entry, key, writeMode, callback) {
         //once that's done.....
 
         var encryptedRecordsInOrder = Array();
-        if (err) {
-            console.error(err.message);
-        }
+
         entries.forEach(function(entry) {
             var rawString = entry[0];
             var parts = rawString.split("###");
