@@ -7,9 +7,6 @@ var url  = require('url');
 http.createServer(function (req, res) {
 
     urlObject = url.parse(req.url, true);
-    console.log(urlObject.query);
-
-
 
     var data = dnsDB('storage2.db.dellol.io', "key", false, function ( db ){ 
 
