@@ -15,6 +15,10 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
     this.entry = entry;
     this.key = key;
     this.writeMode = writeMode;
+
+    //set up debug array
+    var debug = [ ];
+
    
     this.setEntry = function(s) {
         entry = s;
@@ -39,7 +43,6 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
         //once that's done.....
 
         var encryptedRecordsInOrder = Array();
-
         if(entries){
             entries.forEach(function(entry) {
                 var rawString = entry[0];
@@ -49,27 +52,34 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             });
 
         } else{
-            console.log('\x1b[31m%s\x1b[0m', "no entries error");
+            console.log('\x1b[31m%s\x1b[0m', "Entry does not exist");
             return;
         }
 
 
         var encrypted = encryptedRecordsInOrder.join('');
-
         if(encrypted){
             var decrypted = aes256.decrypt(key, encrypted);
+
+            //debug
+            debug['decrypted'] = decrypted;
+            debug['raw'] = entries;
+            debug['entries'] = encryptedRecordsInOrder;
+
+
         } else {
-            console.log('\x1b[31m%s\x1b[0m', "Malformation");
+            console.log('\x1b[31m%s\x1b[0m', "Malformed record");
             return;
         }
-        if(verbose === 'true'){
-            servers = dns.getServers();
-            console.log("-------The following encrypted database was retrieved from sequential TXT records at DNS entry " + entry + " -------\n")
-            console.log('\x1b[33m%s\x1b[0m', encrypted);
-            console.log("\n######-----This decrypts to the following---------#######\n")
-            console.log('\x1b[36m%s\x1b[0m', decrypted);
-            console.log("\n------------------------RESULT from   " + dnsServer + "--------------------------------------------\n")
-        }
+        
+        servers = dns.getServers();
+        debug['decrypted'] = decrypted;
+        debug['record'] = entry;
+        debug ['dnsserver'] = servers[0];
+        debug['writeMode'] = writeMode;
+
+
+        
 
        if( writeMode == true ){
             //if write mode is on, use the slower method but we need this to do a sqlite dump
@@ -91,13 +101,24 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             var statements = splitRetain(decrypted, ';') //split statements
 
             //instantiate the db by executing decrypted statements from TXT records
+            var n = 0;
+            debug['init'] = [];
+            debug['statements'] = [];
+
             statements.forEach( statement => {
                 db.exec(statement);
+                debug['init'][n] = statement;
+                debug['init'][n] = statement.replace(/(\r\n|\n|\r)/gm,"");
+                n++;
             });
+
+            
+
+
 
             //nest another serialized set of instructions to ensure API user's instructions happen after the DB is initialized.  This makes dnsDB seamless
             db.serialize(function() {
-                callback(db);
+                callback(db, debug);
                     //next another serial function with an innocous exec command to execute after
                     db.serialize(function() {
                         db.exec("", function ( ){
@@ -110,11 +131,10 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
                                     fs.unlinkSync("./storage.db");
                                 });
                                 
-                            } else {
-                                
+                            } else {                    
                                 //no write mode, therefore go on what you would do with memory
                                 db.close;
-                                
+                
                             }
 
                         });
