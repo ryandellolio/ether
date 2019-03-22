@@ -3,19 +3,19 @@
 
 var dnsDB = require('./dnsDB.js');
 var query = process.argv[2];
-//      OPTIONAL, with defaults
-var dnsRecord = 'storage3.db.dellol.io';
-var writeMode = false;
 
 if(process.argv[3]){
     var dnsRecord = process.argv[3];
 }
-
-if(process.argv[3] == "true" || process.argv[4] == "true")
+if(process.argv[3] == "true" || process.argv[4] == "true"){
     var writeMode = true;
+}
 
+if(process.argv[5]){
+    var dnsServer = process.argv[5];
+}
 
-var data = dnsDB(dnsRecord, "key", writeMode, function ( db ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
+var data = dnsDB(dnsRecord, "key", writeMode, dnsServer, function ( db ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
 
     db.serialize(function() {         //use as you normally would per https://www.npmjs.com/package/sqlite3
 

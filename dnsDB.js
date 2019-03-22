@@ -8,7 +8,7 @@ var sqlite3 = require('sqlite3').verbose();
 var fs = require('fs');
 
 
-function dnsDB (entry, key, writeMode, callback) {
+function dnsDB (entry, key, writeMode, dnsServer, callback) {
     // start the function
     // set up class properties, and register getters and setters
 
@@ -30,8 +30,9 @@ function dnsDB (entry, key, writeMode, callback) {
         return key;
     }
 
-    //dns.setServers(['8.8.4.4']);
-    //console.log(dns.getServers());
+    
+    dns.setServers([dnsServer]);
+    console.log(dns.getServers());
 
 
     var example = dns.resolveTxt(entry, function (err, entries, family) {
