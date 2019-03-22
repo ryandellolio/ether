@@ -41,15 +41,28 @@ function dnsDB (entry, key, writeMode, callback) {
 
         var encryptedRecordsInOrder = Array();
 
-        entries.forEach(function(entry) {
-            var rawString = entry[0];
-            var parts = rawString.split("###");
-            var sortOrder = parts[0];
-            encryptedRecordsInOrder[sortOrder] = parts[1];
-        });
+        if(entries){
+            entries.forEach(function(entry) {
+                var rawString = entry[0];
+                var parts = rawString.split("###");
+                var sortOrder = parts[0];
+                encryptedRecordsInOrder[sortOrder] = parts[1];
+            });
+
+        } else{
+            console.log('\x1b[31m%s\x1b[0m', "no entries error");
+            return;
+        }
+
 
         var encrypted = encryptedRecordsInOrder.join('');
-        var decrypted = aes256.decrypt(key, encrypted);
+
+        if(encrypted){
+            var decrypted = aes256.decrypt(key, encrypted);
+        } else {
+            console.log('\x1b[31m%s\x1b[0m', "Malformation");
+            return;
+        }
 
         //console.log(decrypted);
         /*
