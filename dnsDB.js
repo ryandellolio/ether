@@ -8,7 +8,7 @@ var sqlite3 = require('sqlite3').verbose();
 var fs = require('fs');
 
 
-function dnsDB (entry, key, writeMode, dnsServer, callback) {
+function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
     // start the function
     // set up class properties, and register getters and setters
 
@@ -32,8 +32,11 @@ function dnsDB (entry, key, writeMode, dnsServer, callback) {
 
     
     dns.setServers([dnsServer]);
-    console.log(dns.getServers());
 
+    if(verbose === 'true'){
+        servers = dns.getServers();
+        console.log('\x1b[31m%s\x1b[0m', "DNS server: " + servers[0]);
+    }
 
     var example = dns.resolveTxt(entry, function (err, entries, family) {
         
@@ -64,17 +67,14 @@ function dnsDB (entry, key, writeMode, dnsServer, callback) {
             console.log('\x1b[31m%s\x1b[0m', "Malformation");
             return;
         }
+        if(verbose === 'true'){
+            console.log("-------The following encrypted database was retrieved from sequential TXT records at DNS entry " + entry + " -------\n")
+            console.log('\x1b[33m%s\x1b[0m', encrypted);
+            console.log("\n######-----This decrypts to the following---------#######\n")
+            console.log('\x1b[36m%s\x1b[0m', decrypted);
+            console.log("\n------------------------RESULT----------------------------------------------\n")
+        }
 
-        /*
-        //VERBOSE MODE
-
-        console.log("-------The following encrypted database was retrieved from sequential TXT records at DNS entry " + entry + " -------\n")
-        console.log('\x1b[33m%s\x1b[0m', encrypted);
-        console.log("\n######-----This decrypts to the following---------#######\n")
-        console.log('\x1b[36m%s\x1b[0m', decrypted);
-        console.log("\n----------------------------------------------------------------------\n")
-        */
-       
        if( writeMode == true ){
             //if write mode is on, use the slower method but we need this to do a sqlite dump
             var db = new sqlite3.Database('storage.db', (err) => {

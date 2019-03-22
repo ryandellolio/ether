@@ -6,8 +6,10 @@ var query = process.argv[2];
 var dnsRecord = process.argv[3];
 var writeMode = process.argv[4];
 var dnsServer = process.argv[5];
+var verbose = process.argv[6];
 
-var data = dnsDB(dnsRecord, "key", writeMode, dnsServer, function ( db ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
+
+var data = dnsDB(dnsRecord, "key", writeMode, dnsServer, verbose, function ( db ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
 
     db.serialize(function() {         //use as you normally would per https://www.npmjs.com/package/sqlite3
 
