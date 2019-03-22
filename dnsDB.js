@@ -84,7 +84,6 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
         debug['writeMode'] = writeMode;
 
 
-
         if( writeMode == true ){
             //if write mode is on, use the slower method but we need this to do a sqlite dump
             var db = new sqlite3.Database('storage.db', (err) => {
@@ -103,6 +102,7 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
                 }
             });
         }
+        
         db.serialize(function() {     //actually work with the DB
             var statements = splitRetain(decrypted, ';') //split statements
 
@@ -132,7 +132,7 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
                             //this ONLY happens once everything is done
                             if(writeMode == 'true'){
                                 
-                                var output = sqlFileToStatementArray('storage.db', function ( output ) {
+                                sqlFileToStatementArray('storage.db', function ( output ) {
                                         //finally we are done
                                         //close db and delete storage file, and save write array
                                         db.close;
@@ -161,10 +161,10 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
 
 
 function sqlFileToStatementArray( filename, callback ) {
-    var save = [];
-    //write db to plaintext for temp storage
+        var save = [];
+        //write db to plaintext for temp storage
         const { exec } = require('child_process');
-        exec('sqlite3 ' + filename + ' .dump > lastPlainText.sql', (error, stdout, stderr) => {
+        exec('sqlite3 ' + filename + ' .dump > lastPlainText.sql', (error, stdout, stderr) => {  //ti
 
             fs.readFile('./lastPlainText.sql', 'utf8', function(err, data) {  
                 
@@ -183,6 +183,7 @@ function sqlFileToStatementArray( filename, callback ) {
                 }); 
                                
                 callback(); 
+                console.log("\nSAVE---")
                 console.log(save);
             });
             
