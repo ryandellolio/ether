@@ -65,7 +65,6 @@ function dnsDB (entry, key, writeMode, dnsServer, callback) {
             return;
         }
 
-        //console.log(decrypted);
         /*
         //VERBOSE MODE
 
@@ -75,6 +74,7 @@ function dnsDB (entry, key, writeMode, dnsServer, callback) {
         console.log('\x1b[36m%s\x1b[0m', decrypted);
         console.log("\n----------------------------------------------------------------------\n")
         */
+       
        if( writeMode == true ){
             //if write mode is on, use the slower method but we need this to do a sqlite dump
             var db = new sqlite3.Database('storage.db', (err) => {

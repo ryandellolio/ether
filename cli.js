@@ -3,17 +3,9 @@
 
 var dnsDB = require('./dnsDB.js');
 var query = process.argv[2];
-
-if(process.argv[3]){
-    var dnsRecord = process.argv[3];
-}
-if(process.argv[3] == "true" || process.argv[4] == "true"){
-    var writeMode = true;
-}
-
-if(process.argv[5]){
-    var dnsServer = process.argv[5];
-}
+var dnsRecord = process.argv[3];
+var writeMode = process.argv[4];
+var dnsServer = process.argv[5];
 
 var data = dnsDB(dnsRecord, "key", writeMode, dnsServer, function ( db ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
 
