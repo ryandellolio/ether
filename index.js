@@ -27,17 +27,6 @@ var data = dnsDB(dnsRecord, "key", writeMode, function ( db ){  //creates a sqli
         });
         
         
-        /*
-        //programatic example
-        db.each("SELECT * FROM content", function(err, row) {  
-            if(err)
-              console.log('\x1b[31m%s\x1b[0m', err);
-            if(row)
-              console.log('\x1b[32m%s\x1b[0m', row.field_id + " | " + row.name + " | " + row.value);            
-          }); 
-
-          */
-        
     }); 
 
 });  

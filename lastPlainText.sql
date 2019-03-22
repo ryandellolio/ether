@@ -15,6 +15,7 @@ INSERT INTO content VALUES(15,'description','<p>Stella</p>');
 INSERT INTO content VALUES(18,'description','<p>Stella</p>');
 INSERT INTO content VALUES(19,'description','<p>Stella</p>');
 INSERT INTO content VALUES(44,'description','<p>Stella</p>');
+INSERT INTO content VALUES(47,'room','Lorem');
 INSERT INTO content VALUES(555,'first cli generated pet','<p>Cat</p>');
 INSERT INTO content VALUES(5556,'Steak','<p>Cat</p>');
 DELETE FROM sqlite_sequence;
