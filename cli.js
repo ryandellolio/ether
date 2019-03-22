@@ -14,12 +14,16 @@ var data = dnsDB(dnsRecord, "key", writeMode, dnsServer, verbose, function ( db,
     db.serialize(function() {         //use as you normally would per https://www.npmjs.com/package/sqlite3
 
         db.each(query, function(err, row) {  
-        
+            
             //display
-            if(err)
-                console.log('\x1b[31m%s\x1b[0m', err);
-            if(row)
+            if(row){
                 console.log('\x1b[34m%s\x1b[0m', row.field_id + " | " + row.name + " | " + row.value); 
+            } else if( row == undefined ){
+                console.log('\x1b[31m%s\x1b[0m', "Empty response");
+            } else {
+                console.log('\x1b[31m%s\x1b[0m', err);
+            }
+        
 
         });
         
