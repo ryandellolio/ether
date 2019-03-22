@@ -14,13 +14,27 @@ var data = dnsDB(dnsRecord, "key", writeMode, dnsServer, verbose, function ( db 
     db.serialize(function() {         //use as you normally would per https://www.npmjs.com/package/sqlite3
 
         db.each(query, function(err, row) {  
-          if(err)
-            console.log('\x1b[31m%s\x1b[0m', err);
-          if(row)
-            console.log('\x1b[32m%s\x1b[0m', row.field_id + " | " + row.name + " | " + row.value);            
+        
+            //display
+            if(err)
+                console.log('\x1b[31m%s\x1b[0m', err);
+            if(row)
+                console.log('\x1b[32m%s\x1b[0m', row.field_id + " | " + row.name + " | " + row.value); 
+
+        });
+        
+        db.exec("", function ( ){
+            //this ONLY happens once everything is done
+
+            if(verbose == 'true'){
+                console.log("The RIGHT VERBOSE")
+            } 
+
         });
         
         
     }); 
+
+
 
 });  

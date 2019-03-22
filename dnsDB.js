@@ -30,13 +30,8 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
         return key;
     }
 
-    
+    //actually set the DNS server
     dns.setServers([dnsServer]);
-
-    if(verbose === 'true'){
-        servers = dns.getServers();
-        console.log('\x1b[31m%s\x1b[0m', "DNS server: " + servers[0]);
-    }
 
     var example = dns.resolveTxt(entry, function (err, entries, family) {
         
@@ -68,11 +63,12 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             return;
         }
         if(verbose === 'true'){
+            servers = dns.getServers();
             console.log("-------The following encrypted database was retrieved from sequential TXT records at DNS entry " + entry + " -------\n")
             console.log('\x1b[33m%s\x1b[0m', encrypted);
             console.log("\n######-----This decrypts to the following---------#######\n")
             console.log('\x1b[36m%s\x1b[0m', decrypted);
-            console.log("\n------------------------RESULT----------------------------------------------\n")
+            console.log("\n------------------------RESULT from   " + dnsServer + "--------------------------------------------\n")
         }
 
        if( writeMode == true ){
@@ -104,31 +100,34 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
                 callback(db);
                     //next another serial function with an innocous exec command to execute after
                     db.serialize(function() {
-                        db.exec("SELECT * FROM content", function ( ){
+                        db.exec("", function ( ){
                             //this ONLY happens once everything is done
                             if(writeMode == true){
-                                sqliteToAWSconsole('storage.db', function () {
+                                    sqliteToAWSconsole('storage.db', function () {
                                     //finally we are done
-                                    //close db and delete files
+                                    //close db and delete storage file
                                     db.close;
                                     fs.unlinkSync("./storage.db");
-                                    //fs.unlinkSync("./lastPlainText.sql");
                                 });
+                                
                             } else {
-                                    db.close;
+                                
+                                //no write mode, therefore go on what you would do with memory
+                                db.close;
+                                
                             }
 
-
                         });
-                    });
+                });
             });
+        
         });  
        
     });
 }
 
 
-
+//function to convert a file into console
 
 function sqliteToAWSconsole( filename, callback ) {
     
@@ -136,8 +135,6 @@ function sqliteToAWSconsole( filename, callback ) {
         const { exec } = require('child_process');
         exec('sqlite3 ' + filename + ' .dump > lastPlainText.sql', (error, stdout, stderr) => {
         
-
-
             fs.readFile('lastPlainText.sql', 'utf8', function(err, data) {  
                 if (err) throw err;
                 var encrypted_init = aes256.encrypt(key, data);
