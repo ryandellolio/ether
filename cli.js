@@ -9,7 +9,7 @@ var dnsServer = process.argv[5];
 var verbose = process.argv[6];
 
 
-var output = dnsDB(dnsRecord, "key", writeMode, dnsServer, verbose, function ( db, debug, newTXT = [] ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
+var output = dnsDB(dnsRecord, "key", writeMode, dnsServer, verbose, function ( db, debug, ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
 
     db.serialize(function() {         //use as you normally would per https://www.npmjs.com/package/sqlite3
 
@@ -29,12 +29,6 @@ var output = dnsDB(dnsRecord, "key", writeMode, dnsServer, verbose, function ( d
         db.exec("", function ( ){
             if(verbose == 'true'){
                 console.log(debug);
-            } 
-        });
-
-        db.exec("", function ( ){
-            if(writeMode == 'true'){
-                //console.log(newTXT);
             } 
         });
                 

@@ -66,10 +66,12 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             //debug
             debug['txt'] = entries;
             debug['entries'] = encryptedRecordsInOrder;
-            debug['encrypted'] = encrypted;
+            debug['raw'] = encrypted;
             debug['key'] = key;
             debug['decrypted'] = decrypted;
             
+
+
         } else {
             console.log('\x1b[31m%s\x1b[0m', "Malformed record");
             return;
@@ -82,7 +84,7 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
         debug['writeMode'] = writeMode;
 
 
-        if( writeMode == true ){
+        if( writeMode == 'true' ){
             //if write mode is on, use the slower method but we need this to do a sqlite dump
             var db = new sqlite3.Database('storage.db', (err) => {
                 if (err) {
@@ -90,7 +92,6 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
                     return;
                 }
             }); 
-
         } else {
             //we will use sqlite3 memory mode if read only, to make this faster
             var db = new sqlite3.Database(':memory:', (err) => {
@@ -159,14 +160,12 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
 
 
 function sqlFileToStatementArray( filename, callback ) {
-        var save = [];
         //write db to plaintext for temp storage
         const { exec } = require('child_process');
         exec('sqlite3 ' + filename + ' .dump > lastPlainText.sql', (error, stdout, stderr) => {  //ti
 
             fs.readFile('./lastPlainText.sql', 'utf8', function(err, data) {  
                 
-
                 if (err) throw err;
                 var encrypted_init = aes256.encrypt(key, data);
                 var encrypted_storage = encrypted_init.match(/.{1,200}/g);
@@ -175,14 +174,13 @@ function sqlFileToStatementArray( filename, callback ) {
                 var sort = 0;
                 encrypted_storage.forEach( blob => {
                     //read out to console
-                    save[sort] = sort + splitChar + blob;
+                    console.log(sort + splitChar + blob);
                     sort++;
                     
                 }); 
-                               
+
                 callback(); 
-                console.log("\nSAVE---")
-                console.log(save);
+
             });
             
         });
