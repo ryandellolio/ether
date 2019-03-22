@@ -70,8 +70,6 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             debug['key'] = key;
             debug['decrypted'] = decrypted;
             
-
-
         } else {
             console.log('\x1b[31m%s\x1b[0m', "Malformed record");
             return;
