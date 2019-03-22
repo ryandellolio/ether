@@ -108,7 +108,7 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             statements.forEach( statement => {
                 db.exec(statement);
                 debug['init'][n] = statement;
-                debug['init'][n] = statement.replace(/(\r\n|\n|\r)/gm,"");
+                debug['statements'][n] = statement.replace(/(\r\n|\n|\r)/gm,"");
                 n++;
             });
 
@@ -119,6 +119,7 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             //nest another serialized set of instructions to ensure API user's instructions happen after the DB is initialized.  This makes dnsDB seamless
             db.serialize(function() {
                 callback(db, debug);
+                    
                     //next another serial function with an innocous exec command to execute after
                     db.serialize(function() {
                         db.exec("", function ( ){
