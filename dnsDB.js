@@ -89,7 +89,7 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
                     console.error(err.message);
                     return;
                 }
-        }); 
+            }); 
 
         } else {
             //we will use sqlite3 memory mode if read only, to make this faster
