@@ -66,7 +66,7 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             //debug
             debug['txt'] = entries;
             debug['entries'] = encryptedRecordsInOrder;
-            debug['raw'] = encrypted;
+            debug['encrypted'] = encrypted;
             debug['key'] = key;
             debug['decrypted'] = decrypted;
             
