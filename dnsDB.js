@@ -121,13 +121,15 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             //nest another serialized set of instructions to ensure API user's instructions happen after the DB is initialized.  This makes dnsDB seamless
             db.serialize(function() {
                 callback(db, debug);
-                                                    debug['save'] = "hi";
+                                       
 
                     //next another serial function with an innocous exec command to execute after
                     db.serialize(function() {
                         db.exec("", function ( ){
-                            
 
+                            debug['save'] = "save";
+
+                            /*
                             //this ONLY happens once everything is done
                             if(writeMode == true){
 
@@ -137,14 +139,12 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
                                             db.close;
                                             fs.unlinkSync("./storage.db");
                                         });
-
-
                                 
                             } else {                    
                                 //no write mode, therefore go on what you would do with memory
                                 db.close;
                 
-                            }
+                            } */
 
                         });
                 });

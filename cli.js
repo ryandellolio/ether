@@ -1,5 +1,5 @@
-//TODO - add read only mode to dnsDB and if it's a writable mode, write to AWS Route 53
-//TODO - have dnsdb provide output to re-save to DB
+//TODO - fix save
+
 
 var dnsDB = require('./dnsDB.js');
 var query = process.argv[2];
