@@ -62,12 +62,9 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             var decrypted = aes256.decrypt(key, encrypted);
 
             //debug
-            debug['txt'] = entries;
-            debug['entries'] = encryptedRecordsInOrder;
-            debug['raw'] = encrypted;
-            debug['key'] = key;
             debug['decrypted'] = decrypted;
-            
+            debug['raw'] = entries;
+            debug['entries'] = encryptedRecordsInOrder;
 
 
         } else {
