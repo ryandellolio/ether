@@ -1,4 +1,4 @@
-//TODO - fix error handling
+//TODO - fix save
 
 
 var dnsDB = require('./dnsDB.js');
@@ -9,12 +9,12 @@ var dnsServer = process.argv[5];
 var verbose = process.argv[6];
 
 
-var output = dnsDB(dnsRecord, "key", writeMode, dnsServer, verbose, function ( db, debug, newTXT = [] ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
+var data = dnsDB(dnsRecord, "key", writeMode, dnsServer, verbose, function ( db, debug ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
 
     db.serialize(function() {         //use as you normally would per https://www.npmjs.com/package/sqlite3
 
         db.each(query, function(err, row) {  
-
+            
             //display
             if(row){
                 console.log('\x1b[34m%s\x1b[0m', row.field_id + " | " + row.name + " | " + row.value); 
@@ -24,20 +24,21 @@ var output = dnsDB(dnsRecord, "key", writeMode, dnsServer, verbose, function ( d
                 console.log('\x1b[31m%s\x1b[0m', err);
             }
         
+
         });
         
         db.exec("", function ( ){
+            //have to wrap in exec query so this gets sequenced after the query is run
+
             if(verbose == 'true'){
                 console.log(debug);
             } 
-        });
 
-        db.exec("", function ( ){
-            if(writeMode == 'true'){
-                //console.log(newTXT);
-            } 
         });
-                
+        
+        
     }); 
+
+
 
 });  

@@ -6,8 +6,6 @@ var aes256 = require('aes256');
 var splitRetain = require('split-retain');
 var sqlite3 = require('sqlite3').verbose();
 var fs = require('fs');
-splitChar = "###";
-var output = [];
 
 
 function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
@@ -48,7 +46,7 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
         if(entries){
             entries.forEach(function(entry) {
                 var rawString = entry[0];
-                var parts = rawString.split(splitChar);
+                var parts = rawString.split("###");
                 var sortOrder = parts[0];
                 encryptedRecordsInOrder[sortOrder] = parts[1];
             });
@@ -80,17 +78,17 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
         servers = dns.getServers();
         debug['decrypted'] = decrypted;
         debug['record'] = entry;
-        debug['dnsserver'] = servers[0];
+        debug ['dnsserver'] = servers[0];
         debug['writeMode'] = writeMode;
 
 
+        
 
-        if( writeMode == true ){
+       if( writeMode == true ){
             //if write mode is on, use the slower method but we need this to do a sqlite dump
             var db = new sqlite3.Database('storage.db', (err) => {
                 if (err) {
                     console.error(err.message);
-                    return;
                 }
         }); 
 
@@ -99,7 +97,6 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             var db = new sqlite3.Database(':memory:', (err) => {
                 if (err) {
                     console.error(err.message);
-                    return;
                 }
             });
         }
@@ -117,76 +114,77 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
                 debug['statements'][n] = statement.replace(/(\r\n|\n|\r)/gm,"");
                 n++;
             });
-            
+
             
 
 
             //nest another serialized set of instructions to ensure API user's instructions happen after the DB is initialized.  This makes dnsDB seamless
             db.serialize(function() {
-                
+                callback(db, debug);
+                                       
 
                     //next another serial function with an innocous exec command to execute after
                     db.serialize(function() {
                         db.exec("", function ( ){
-                        
+
+                            debug['save'] = "save";
+
+                            /*
                             //this ONLY happens once everything is done
-                            if(writeMode == 'true'){
-                                
-                                var output = sqlFileToStatementArray('storage.db', function ( output ) {
-                                        //finally we are done
-                                        //close db and delete storage file, and save write array
-                                        db.close;
-                                        fs.unlinkSync("./storage.db");
-                                        
-                                });                                
+                            if(writeMode == true){
+
+                                        sqliteToAWSconsole('storage.db', function () {
+                                            //finally we are done
+                                            //close db and delete storage file
+                                            db.close;
+                                            fs.unlinkSync("./storage.db");
+                                        });
                                 
                             } else {                    
                                 //no write mode, therefore go on what you would do with memory
                                 db.close;
                 
-                            } 
+                            } */
+
                         });
                 });
-                //finally do the callback with debug statements
-                callback(db, debug);                 
-                
-
-        
             });
-            
-        });  
         
+        });  
+       
     });
 }
 
 
-function sqlFileToStatementArray( filename, callback ) {
-    var save = [];
+//function to convert a file into console
+
+//function to convert a file into console
+
+function sqliteToAWSconsole( filename, callback ) {
+    
     //write db to plaintext for temp storage
         const { exec } = require('child_process');
         exec('sqlite3 ' + filename + ' .dump > lastPlainText.sql', (error, stdout, stderr) => {
-
-            fs.readFile('./lastPlainText.sql', 'utf8', function(err, data) {  
-                
-
+        
+            fs.readFile('lastPlainText.sql', 'utf8', function(err, data) {  
                 if (err) throw err;
                 var encrypted_init = aes256.encrypt(key, data);
                 var encrypted_storage = encrypted_init.match(/.{1,200}/g);
 
-
-                var sort = 0;
+                var sort = 1;
                 encrypted_storage.forEach( blob => {
                     //read out to console
-                    save[sort] = sort + splitChar + blob;
+                    console.log("\"" + sort+ "###" + blob + "\"\n\n");
                     sort++;
-                    
                 }); 
-                               
-                callback(); 
-                console.log(save);
+                callback();                
+                
             });
             
         });
+
+        
+
 
 }
 
