@@ -118,22 +118,27 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
             
 
 
-
             //nest another serialized set of instructions to ensure API user's instructions happen after the DB is initialized.  This makes dnsDB seamless
             db.serialize(function() {
                 callback(db, debug);
-                    
+                                                    debug['save'] = "hi";
+
                     //next another serial function with an innocous exec command to execute after
                     db.serialize(function() {
                         db.exec("", function ( ){
+                            
+
                             //this ONLY happens once everything is done
                             if(writeMode == true){
-                                    sqliteToAWSconsole('storage.db', function () {
-                                    //finally we are done
-                                    //close db and delete storage file
-                                    db.close;
-                                    fs.unlinkSync("./storage.db");
-                                });
+
+                                        sqliteToAWSconsole('storage.db', function () {
+                                            //finally we are done
+                                            //close db and delete storage file
+                                            db.close;
+                                            fs.unlinkSync("./storage.db");
+                                        });
+
+
                                 
                             } else {                    
                                 //no write mode, therefore go on what you would do with memory
@@ -153,6 +158,8 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
 
 //function to convert a file into console
 
+//function to convert a file into console
+
 function sqliteToAWSconsole( filename, callback ) {
     
     //write db to plaintext for temp storage
@@ -167,7 +174,7 @@ function sqliteToAWSconsole( filename, callback ) {
                 var sort = 1;
                 encrypted_storage.forEach( blob => {
                     //read out to console
-                    process.stdout.write("\"" + sort+ "###" + blob + "\"\n\n");
+                    console.log("\"" + sort+ "###" + blob + "\"\n\n");
                     sort++;
                 }); 
                 callback();                
