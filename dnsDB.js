@@ -85,13 +85,16 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
 
 
         if( writeMode == 'true' ){
+            fs.unlinkSync("./storage.db");// clear old DBs
+
             //if write mode is on, use the slower method but we need this to do a sqlite dump
             var db = new sqlite3.Database('storage.db', (err) => {
                 if (err) {
                     console.error(err.message);
                     return;
                 }
-            }); 
+        }); 
+
         } else {
             //we will use sqlite3 memory mode if read only, to make this faster
             var db = new sqlite3.Database(':memory:', (err) => {
@@ -135,7 +138,7 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
                                         //finally we are done
                                         //close db and delete storage file, and save write array
                                         db.close;
-                                        fs.unlinkSync("./storage.db");
+                                        
                                         
                                 });                                
                                 
