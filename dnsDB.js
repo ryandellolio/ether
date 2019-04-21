@@ -85,7 +85,16 @@ function dnsDB (entry, key, writeMode, dnsServer, verbose, callback) {
 
 
         if( writeMode == 'true' ){
-            fs.unlinkSync("./storage.db");// clear old DBs
+
+            try {
+                if (fs.existsSync("./storage.db")) {
+                    fs.unlinkSync("./storage.db");// clear old DBs
+                }
+              } catch(err) {
+                console.error(err);
+              }
+
+            
 
             //if write mode is on, use the slower method but we need this to do a sqlite dump
             var db = new sqlite3.Database('storage.db', (err) => {
