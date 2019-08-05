@@ -9,6 +9,13 @@ var dnsServer = process.argv[5];
 var verbose = process.argv[6];
 
 
+// -- 
+// -- 
+// -- node cli.js "SELECT * FROM content" storage2.db.dellol.io false 8.8.8.8 true
+// --
+// --
+// --
+
 var output = dnsDB(dnsRecord, "key", writeMode, dnsServer, verbose, function ( db, debug, ){  //creates a sqlite3 db from a DNS call.  true denotes write mode
 
     db.serialize(function() {         //use as you normally would per https://www.npmjs.com/package/sqlite3

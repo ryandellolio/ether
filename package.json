@@ -17,14 +17,16 @@
   },
   "homepage": "https://github.com/ryandellolio/ether#readme",
   "dependencies": {
+    "3": "^2.1.0",
     "aes256": "^1.0.4",
     "dns": "^0.2.2",
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "moment": "^2.24.0",
-    "npm": "^6.9.0",
+    "npm": "^6.10.2",
     "query-string": "^6.4.0",
     "split-retain": "^1.0.1",
+    "sqlite": "^3.0.3",
     "sqlite3": "^4.0.6",
     "url": "^0.11.0"
   }
