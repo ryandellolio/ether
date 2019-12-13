@@ -23,7 +23,7 @@
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "moment": "^2.24.0",
-    "npm": "^6.10.2",
+    "npm": "^6.13.4",
     "query-string": "^6.4.0",
     "split-retain": "^1.0.1",
     "sqlite": "^3.0.3",
